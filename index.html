@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AgeCare</title>
+<meta name="description" content="เว็บไซต์สำหรับผู้สูงอายุ">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap">
+<style>
+/* Same palette as the games: large text, contrast >= 7:1 */
+:root {
+  --bg: #EDF2EF;
+  --surface: #FFFFFF;
+  --ink: #0F2924;
+  --muted: #33473F;
+  --line: #9DB3AC;
+  --accent: #065244;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #D3E9E2;
+  --glow: #F0AE2E;
+  --body: "Sarabun", "Noto Sans Thai Looped", "Leelawadee UI", "Thonburi", system-ui, sans-serif;
+  font-size: 24px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1917; --surface: #172724; --ink: #F0F6F4; --muted: #C6D6D1; --line: #4A6760;
+    --accent: #6FD8BC; --accent-ink: #04211A; --accent-soft: #1C3E36; --glow: #F5BC48;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 1rem; line-height: 1.55; }
+.wrap {
+  max-width: 760px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 1.2rem 2rem;
+  display: flex; flex-direction: column; gap: 24px;
+}
+h1, h2 { font-weight: 700; line-height: 1.3; margin: 0; text-wrap: balance; }
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.3rem; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.hero { background: var(--accent-soft); border-radius: 20px; padding: 1.1rem; display: flex; flex-direction: column; gap: .4rem; }
+.card {
+  display: grid; grid-template-columns: auto 1fr; align-items: center; gap: .9rem;
+  padding: 1rem; border-radius: 20px; min-height: 64px;
+  background: var(--surface); border: 3px solid var(--line); color: var(--ink); text-decoration: none;
+}
+.card:hover { border-color: var(--accent); }
+.card:focus-visible { outline: 4px solid var(--glow); outline-offset: 3px; }
+.card-ico { width: 3.2rem; height: 3.2rem; border-radius: 14px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; }
+.card-ico svg { width: 2rem; height: 2rem; }
+.card-name { font-weight: 700; font-size: 1.2rem; display: block; }
+.card-go { display: inline-block; margin-top: .3rem; font-weight: 700; color: var(--accent); }
+footer { color: var(--muted); }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="hero">
+    <h1>AgeCare</h1>
+    <p>เว็บไซต์สำหรับผู้สูงอายุ อ่านง่าย ใช้ง่าย</p>
+  </header>
+
+  <section aria-labelledby="games-h" style="display:flex;flex-direction:column;gap:16px">
+    <h2 id="games-h">เกมฝึกสมอง</h2>
+    <a class="card" href="games/smongsai/">
+      <span class="card-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3z"/><path d="M15 3a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-3 3 3 3 0 0 1-3-3"/></svg>
+      </span>
+      <span>
+        <span class="card-name">สมองใส</span>
+        <span class="muted">ฝึกสมองวันละนิด สนุกได้ทุกวัน</span><br>
+        <span class="card-go">เล่นเกม →</span>
+      </span>
+    </a>
+  </section>
+
+  <footer>AgeCare</footer>
+</main>
+</body>
+</html>

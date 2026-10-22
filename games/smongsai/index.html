@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>เกมสมองใส</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap">
+<style>
+/* Layout: one calm centered column, one task per screen, all text >= 24px, contrast >= 7:1 */
+:root {
+  --bg: #EDF2EF;
+  --surface: #FFFFFF;
+  --ink: #0F2924;
+  --muted: #33473F;
+  --line: #9DB3AC;
+  --accent: #065244;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #D3E9E2;
+  --glow: #F0AE2E;
+  --good: #11502A;
+  --good-soft: #DDF0E2;
+  --bad: #7E2716;
+  --bad-soft: #F8E4DD;
+  --mask-a: #9FB3AD;
+  --mask-b: #4E625C;
+  --body: "Sarabun", "Noto Sans Thai Looped", "Leelawadee UI", "Thonburi", system-ui, sans-serif;
+  font-size: 24px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1917; --surface: #172724; --ink: #F0F6F4; --muted: #C6D6D1; --line: #4A6760;
+    --accent: #6FD8BC; --accent-ink: #04211A; --accent-soft: #1C3E36;
+    --glow: #F5BC48;
+    --good: #8FE6A8; --good-soft: #143220; --bad: #F7B3A2; --bad-soft: #3F1F18;
+    --mask-a: #3E5751; --mask-b: #7B958E;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1917; --surface: #172724; --ink: #F0F6F4; --muted: #C6D6D1; --line: #4A6760;
+  --accent: #6FD8BC; --accent-ink: #04211A; --accent-soft: #1C3E36;
+  --glow: #F5BC48;
+  --good: #8FE6A8; --good-soft: #143220; --bad: #F7B3A2; --bad-soft: #3F1F18;
+  --mask-a: #3E5751; --mask-b: #7B958E;
+  color-scheme: dark;
+}
+:root.big { font-size: 28px; }
+
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 1rem; line-height: 1.55; }
+.wrap {
+  max-width: 760px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: .8rem 2rem;
+  display: flex; flex-direction: column; gap: 16px;
+}
+h1, h2, h3 { font-weight: 700; line-height: 1.3; margin: 0; text-wrap: balance; }
+h1 { font-size: 1.6rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.15rem; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+
+.btn {
+  font-family: var(--body); font-size: 1rem; font-weight: 700;
+  min-height: 64px; padding: .3rem 1rem; border-radius: 14px;
+  border: 3px solid transparent; background: var(--accent); color: var(--accent-ink);
+  cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
+  touch-action: manipulation;
+}
+.btn svg { width: 1.2em; height: 1.2em; flex: none; }
+.btn.secondary { background: var(--surface); color: var(--ink); border-color: var(--line); }
+button:focus-visible { outline: 4px solid var(--glow); outline-offset: 3px; }
+button:disabled { cursor: default; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 16px; }
+.btn-row .btn { flex: 1 1 10rem; }
+
+/* Home */
+.brand { display: flex; align-items: center; gap: .7rem; }
+.brand-mark { width: 2.6rem; height: 2.6rem; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; flex: none; }
+.brand-mark svg { width: 1.6rem; height: 1.6rem; }
+.today { background: var(--accent-soft); border-radius: 14px; padding: .6rem .9rem; }
+.daily { display: flex; flex-direction: column; gap: .6rem; background: var(--surface); border: 3px solid var(--accent); border-radius: 18px; padding: 1rem; }
+.daily ol { margin: 0; padding-left: 1.4rem; }
+.section-label { font-weight: 700; color: var(--muted); }
+.cards { display: flex; flex-direction: column; gap: 16px; }
+.card {
+  display: grid; grid-template-columns: auto 1fr; align-items: center; gap: .8rem;
+  width: 100%; text-align: left; padding: .8rem .9rem; border-radius: 18px; min-height: 64px;
+  background: var(--surface); border: 3px solid var(--line); color: var(--ink);
+  font-family: var(--body); font-size: 1rem; cursor: pointer;
+}
+.card:hover { border-color: var(--accent); }
+.card-ico { width: 2.8rem; height: 2.8rem; border-radius: 12px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; flex: none; }
+.card-ico svg { width: 1.8rem; height: 1.8rem; }
+.card-text { min-width: 0; display: flex; flex-direction: column; }
+.card-name { font-weight: 700; font-size: 1.15rem; }
+.card-skill { color: var(--muted); }
+.settings { display: flex; flex-direction: column; gap: 16px; background: var(--surface); border-radius: 18px; padding: 1rem; border: 2px solid var(--line); }
+.set-row { display: flex; flex-direction: column; gap: .4rem; }
+.set-label { font-weight: 700; }
+.seg { display: flex; gap: 16px; }
+.seg .btn { flex: 1; white-space: nowrap; }
+.seg .btn[aria-pressed="false"] { background: var(--surface); color: var(--ink); border-color: var(--line); }
+.foot { color: var(--muted); }
+
+/* Intro / rest / result */
+.panel { background: var(--surface); border-radius: 20px; border: 2px solid var(--line); padding: 1rem; display: flex; flex-direction: column; gap: 16px; }
+.intro-head { display: flex; align-items: center; gap: .8rem; }
+.howto { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: .7rem; counter-reset: s; }
+.howto li { display: grid; grid-template-columns: 1.8rem 1fr; gap: .6rem; align-items: start; counter-increment: s; }
+.howto li::before { content: counter(s); font-weight: 700; width: 1.8rem; height: 1.8rem; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; }
+.note { background: var(--accent-soft); border-radius: 14px; padding: .7rem .9rem; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 16px; }
+.stat { background: var(--bg); border-radius: 14px; padding: .6rem .9rem; }
+.stat b { display: block; font-size: 1.5rem; font-variant-numeric: tabular-nums; line-height: 1.3; }
+.log { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: .5rem; }
+.log li { display: flex; justify-content: space-between; gap: .8rem; flex-wrap: wrap; border-bottom: 2px solid var(--bg); padding-bottom: .4rem; }
+.log b { font-variant-numeric: tabular-nums; }
+
+/* Play */
+.playbar { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.pb-title { font-weight: 700; flex: 1 1 8rem; min-width: 0; }
+.pb-count { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--muted); }
+.dots { display: flex; gap: .3rem; }
+.dots span { flex: 1; height: .45rem; border-radius: 999px; background: var(--line); }
+.dots span.done { background: var(--accent); }
+.dots span.now { background: var(--glow); }
+.fb { border-radius: 14px; padding: .5rem .8rem; display: flex; align-items: center; gap: .7rem; font-weight: 700; font-size: 1.1rem; min-height: 3.4rem; visibility: hidden; }
+.fb.show { visibility: visible; }
+.fb.good { background: var(--good-soft); color: var(--good); }
+.fb.bad { background: var(--bad-soft); color: var(--bad); }
+.fb-ico { font-size: 1.8rem; line-height: 1; flex: none; }
+.fb-sub { display: block; font-weight: 400; font-size: 1rem; color: var(--ink); }
+.stage { background: var(--surface); border-radius: 20px; border: 2px solid var(--line); padding: 1rem .8rem 1.2rem; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.prompt { font-weight: 700; font-size: 1.15rem; text-align: center; text-wrap: balance; min-height: 1.6em; }
+.tag { align-self: center; background: var(--glow); color: #2A1B00; border-radius: 999px; padding: 0 .8rem; font-weight: 700; }
+.mark { font-weight: 700; }
+
+/* Game 1: field */
+.field { display: grid; grid-template-columns: repeat(3, 1fr); gap: .35rem; width: 100%; max-width: 15rem; }
+.slot { aspect-ratio: 1; max-width: 100%; border-radius: 14px; background: var(--bg); border: 3px solid var(--line); display: grid; place-items: center; font-size: 2.3rem; line-height: 1; color: var(--ink); padding: 0; font-family: var(--body); }
+.slot.center { border-color: var(--muted); }
+.slot .fix { font-weight: 700; color: var(--muted); }
+.field.masked .slot { background: repeating-conic-gradient(var(--mask-a) 0 25%, var(--mask-b) 0 50%) 0 0 / .9rem .9rem; }
+.slot.pos { cursor: pointer; background: var(--surface); flex-direction: column; font-size: .8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0; }
+.slot.pos .arr { font-size: 1.3rem; line-height: 1.1; }
+.slot.right { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+.slot.wrong { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
+.slot.blank { visibility: hidden; }
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 24rem; }
+.opt { min-height: 4.2rem; border-radius: 16px; background: var(--surface); border: 3px solid var(--line); color: var(--ink); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .1rem; padding: .3rem; font-family: var(--body); font-size: 1rem; font-weight: 700; }
+.opt .emo { font-size: 2.2rem; line-height: 1.1; }
+.opt.right, .card2.right { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+.opt.wrong, .card2.wrong { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
+
+/* Game 2: cards */
+.board { display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: .4rem; width: 100%; max-width: 24rem; }
+.card2 { aspect-ratio: 3 / 4; max-width: 100%; border-radius: 12px; border: 3px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: .1rem; font-family: var(--body); font-size: .75rem; font-weight: 700; line-height: 1.2; position: relative; }
+.card2 .emo { font-size: 2.1rem; line-height: 1.1; }
+.board.c4 .card2 .emo { font-size: 1.7rem; }
+.card2.down { background: var(--accent); border-color: var(--accent); }
+.card2.down > * { visibility: hidden; }
+.card2.down::after { content: "?"; position: absolute; color: var(--accent-ink); font-size: 1.6rem; font-weight: 700; }
+.card2 .mark { position: absolute; top: .1rem; right: .3rem; font-size: 1rem; }
+
+/* Game 3: tiles */
+.tiles { display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: 16px; width: 100%; max-width: 24rem; }
+.tile { min-height: 5rem; border-radius: 18px; background: var(--tc); border: 6px solid var(--tc); color: #FFFFFF; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--body); font-weight: 700; font-size: 1rem; line-height: 1.1; padding: .2rem; position: relative; }
+.tile .shp { font-size: 2.2rem; }
+.tile.lit { background: #FFFFFF; color: var(--tc); box-shadow: 0 0 0 5px var(--glow); }
+.tile .mark { position: absolute; top: .2rem; right: .4rem; font-size: 1.3rem; }
+.tile.wrong { box-shadow: 0 0 0 5px var(--bad); }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* AgeCare site link */
+.backlink { display: inline-flex; align-items: center; gap: .4rem; min-height: 64px; font-weight: 700; color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
+.backlink:focus-visible { outline: 4px solid var(--glow); outline-offset: 3px; border-radius: 8px; }
+</style>
+</head>
+<body style="margin:0">
+<nav class="wrap" style="padding-bottom:0" aria-label="เมนู"><a class="backlink" href="../../">← กลับหน้าแรก AgeCare</a></nav>
+<div class="wrap" id="app"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- storage (best effort) ----------
+  const NS = "smongsai2:";
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(NS + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(NS + k, JSON.stringify(v)); } catch (e) {} }
+  };
+  const settings = Object.assign({ big: false, sound: true, voice: false }, store.get("settings", {}));
+  function applySettings() { document.documentElement.classList.toggle("big", !!settings.big); }
+  applySettings();
+
+  const app = document.getElementById("app");
+  let timers = [];
+  function later(fn, ms) { const t = setTimeout(fn, ms); timers.push(t); return t; }
+  function clearTimers() { timers.forEach(clearTimeout); timers = []; hush(); }
+
+  // ---------- sound: gentle chime for correct, nothing harsh for wrong ----------
+  let actx = null;
+  function note(freqs, vol, gap) {
+    if (!settings.sound) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      freqs.forEach((f, i) => {
+        const o = actx.createOscillator(), g = actx.createGain();
+        o.type = "sine"; o.frequency.value = f;
+        const t = actx.currentTime + i * gap;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(vol, t + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+        o.connect(g).connect(actx.destination);
+        o.start(t); o.stop(t + 0.45);
+      });
+    } catch (e) {}
+  }
+  const chime = () => note([660, 880], 0.16, 0.14);
+
+  // ---------- read aloud (optional) ----------
+  const canSpeak = "speechSynthesis" in window;
+  function speak(text, force) {
+    if (!canSpeak || (!settings.voice && !force)) return;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "th-TH"; u.rate = 0.85;
+      const v = speechSynthesis.getVoices().find((x) => /^th/i.test(x.lang));
+      if (v) u.voice = v;
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function hush() { try { if (canSpeak) speechSynthesis.cancel(); } catch (e) {} }
+
+  // ---------- helpers ----------
+  const rnd = (n) => Math.floor(Math.random() * n);
+  const pick = (a) => a[rnd(a.length)];
+  function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  function todayKey() { const d = new Date(); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
+
+  const ICON = {
+    brain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 6 1V5a2 2 0 0 0-3-1Z"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-6 1"/><path d="M12 9h2M12 14h3"/></svg>',
+    eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/></svg>',
+    cards: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="8" height="11" rx="1.5"/><rect x="13" y="9" width="8" height="11" rx="1.5" fill="currentColor"/></svg>',
+    seq: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="currentColor"/></svg>',
+    play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5Z"/></svg>',
+    home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M3 11 12 3l9 8v10h-6v-6H9v6H3Z"/></svg>',
+    sound: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9Z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
+    next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12.5 5 5L20 6.5"/></svg>',
+    off: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+    text: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19 9 5l5 14M6 14h6M15 19l3-8 3 8M16 16.5h4"/></svg>'
+  };
+
+  const ITEMS = {
+    fruit: [["🍎", "แอปเปิล"], ["🍌", "กล้วย"], ["🍇", "องุ่น"], ["🍉", "แตงโม"], ["🍊", "ส้ม"], ["🍍", "สับปะรด"], ["🥕", "แครอท"], ["🌽", "ข้าวโพด"]],
+    animal: [["🐶", "สุนัข"], ["🐱", "แมว"], ["🐟", "ปลา"], ["🐦", "นก"], ["🐢", "เต่า"], ["🐘", "ช้าง"], ["🐄", "วัว"], ["🐓", "ไก่"]],
+    thing: [["🚗", "รถยนต์"], ["⏰", "นาฬิกา"], ["🌂", "ร่ม"], ["🔑", "กุญแจ"], ["📚", "หนังสือ"], ["🎈", "ลูกโป่ง"], ["🏠", "บ้าน"], ["🚲", "จักรยาน"]]
+  };
+  const ALL_ITEMS = Object.values(ITEMS).flat();
+
+  // ---------- game 1: ตาไวมือไว (core speed-of-processing game) ----------
+  const FL_MAX = 12;
+  const flBase = (l) => Math.round(1000 * Math.pow(0.12, (l - 1) / 11)); // 1000ms -> 120ms
+  const flOpts = (l) => (l <= 2 ? 2 : l <= 4 ? 3 : 4);
+  const flDirs = (l) => (l >= 10 ? 8 : l >= 7 ? 4 : 0);
+  const POS = { 0: ["↖", "บนซ้าย"], 1: ["↑", "บน"], 2: ["↗", "บนขวา"], 3: ["←", "ซ้าย"], 5: ["→", "ขวา"], 6: ["↙", "ล่างซ้าย"], 7: ["↓", "ล่าง"], 8: ["↘", "ล่างขวา"] };
+  let fs = { level: 0, ms: 0, streak: 0 };
+
+  const flash = {
+    id: "flash", name: "ตาไวมือไว", icon: ICON.eye, skill: "ฝึกความเร็วในการมองและรับรู้",
+    howto: ["มองที่เครื่องหมาย + ตรงกลาง", "ภาพจะขึ้นมาแวบเดียวแล้วถูกบังไว้", "แตะชื่อภาพที่เห็นตรงกลาง", "ระดับสูงขึ้นจะมีรูปดาวขึ้นด้านข้างด้วย ให้แตะตำแหน่งของดาว"],
+    max: FL_MAX,
+    detail(l) {
+      let s = "ภาพขึ้นนาน " + (flBase(l) / 1000).toFixed(2) + " วินาที ตัวเลือก " + flOpts(l) + " ภาพ";
+      if (flDirs(l)) s += " และจำตำแหน่งดาว " + flDirs(l) + " ทิศ";
+      return s;
+    },
+    round(ctx) {
+      const l = ctx.level;
+      if (fs.level !== l) fs = { level: l, ms: flBase(l), streak: 0 };
+      const ms = Math.round(fs.ms);
+      const cat = pick(Object.keys(ITEMS));
+      const target = pick(ITEMS[cat]);
+      // ตั้งแต่ระดับ 5 ตัวหลอกมาจากหมวดเดียวกัน แยกยากขึ้น
+      const pool = l >= 5 ? ITEMS[cat] : ALL_ITEMS;
+      const choices = shuffle([target].concat(shuffle(pool.filter((x) => x !== target)).slice(0, flOpts(l) - 1)));
+      const dirs = flDirs(l);
+      const allowed = dirs === 4 ? [1, 3, 5, 7] : [0, 1, 2, 3, 5, 6, 7, 8];
+      const star = dirs ? pick(allowed) : -1;
+
+      ctx.stage.innerHTML = '<div class="field" id="fld">' +
+        [...Array(9).keys()].map((i) => '<div class="slot' + (i === 4 ? " center" : "") + '" data-i="' + i + '">' + (i === 4 ? '<span class="fix">+</span>' : "") + "</div>").join("") +
+        '</div><div class="opts" id="opts"></div>';
+      ctx.prompt("มองที่เครื่องหมาย + ตรงกลาง");
+      const fld = ctx.stage.querySelector("#fld"), opts = ctx.stage.querySelector("#opts");
+      const slots = [...fld.children];
+
+      const t0 = 1400;
+      later(() => { slots[4].textContent = target[0]; if (star >= 0) slots[star].textContent = "⭐"; }, t0);
+      later(() => { slots.forEach((s) => { s.textContent = ""; }); fld.classList.add("masked"); }, t0 + ms);
+      later(() => {
+        fld.classList.remove("masked");
+        slots[4].innerHTML = '<span class="fix">?</span>';
+        ctx.prompt("ภาพตรงกลางคืออะไร");
+        opts.innerHTML = choices.map((c, i) => '<button class="opt" data-i="' + i + '"><span class="emo">' + c[0] + "</span>" + c[1] + "</button>").join("");
+        const btns = [...opts.children];
+        btns.forEach((b) => b.addEventListener("click", () => {
+          btns.forEach((x) => { x.disabled = true; });
+          const okC = choices[+b.dataset.i] === target;
+          btns.forEach((x) => { if (choices[+x.dataset.i] === target) { x.classList.add("right"); x.insertAdjacentHTML("beforeend", '<span class="mark">✓ ถูก</span>'); } });
+          if (!okC) { b.classList.add("wrong"); b.insertAdjacentHTML("beforeend", '<span class="mark">✗</span>'); }
+          slots[4].textContent = target[0];
+          if (!dirs) return finish(okC, okC ? "" : "ภาพตรงกลางคือ" + target[1]);
+          ctx.prompt("ดาวขึ้นที่ตรงไหน");
+          slots.forEach((s, i) => {
+            if (i === 4) return;
+            if (!allowed.includes(i)) { s.classList.add("blank"); return; }
+            const btn = document.createElement("button");
+            btn.className = "slot pos"; btn.dataset.i = i;
+            btn.innerHTML = '<span class="arr">' + POS[i][0] + "</span>" + POS[i][1];
+            s.replaceWith(btn); slots[i] = btn;
+            btn.addEventListener("click", () => {
+              slots.forEach((x) => { if (x.tagName === "BUTTON") x.disabled = true; });
+              const okP = i === star;
+              slots[star].classList.add("right"); slots[star].innerHTML = '<span class="arr">⭐</span>✓ ถูก';
+              if (!okP) { btn.classList.add("wrong"); btn.insertAdjacentHTML("beforeend", "<span>✗</span>"); }
+              const msg = [okC ? "" : "ภาพตรงกลางคือ" + target[1], okP ? "" : "ดาวอยู่ด้าน" + POS[star][1]].filter(Boolean).join(" และ");
+              finish(okC && okP, msg);
+            });
+          });
+        }));
+      }, t0 + ms + 700);
+
+      function finish(ok, msg) {
+        // ภายในระดับ: ถูก 2 ข้อติดกัน เวลาสั้นลง 10% / ผิด เวลานานขึ้น 10%
+        if (ok) { fs.streak++; if (fs.streak >= 2) { fs.ms *= 0.9; fs.streak = 0; } }
+        else { fs.streak = 0; fs.ms *= 1.1; }
+        const lo = l < FL_MAX ? flBase(l + 1) : 100, hi = flBase(l) * 1.3;
+        fs.ms = Math.min(hi, Math.max(lo, fs.ms));
+        ctx.trial(ok, msg);
+        ctx.end();
+      }
+    }
+  };
+
+  // ---------- game 2: จับคู่ภาพ ----------
+  // ไพ่คว่ำตั้งแต่ต้น ไม่เปิดให้ดูก่อน
+  // [คอลัมน์, แถว, เวลาที่ไพ่คู่ที่ไม่ตรงกันเปิดค้างไว้ก่อนคว่ำกลับ (วินาที)]
+  const MT = [null, [3, 2, 2.2], [4, 2, 2.2], [4, 2, 1.6], [3, 4, 2.2], [3, 4, 1.6], [4, 4, 2.2], [4, 4, 1.6]];
+  const match = {
+    id: "match", name: "จับคู่ภาพ", icon: ICON.cards, skill: "ฝึกความจำภาพและตำแหน่ง",
+    howto: ["ไพ่ทุกใบคว่ำอยู่", "แตะเปิดทีละ 2 ใบ หาให้เป็นภาพเดียวกัน", "ถ้าไม่ตรงกัน ไพ่จะคว่ำกลับ จำไว้ว่าใบไหนเป็นภาพอะไร", "ลองใหม่ได้เรื่อย ๆ ไม่มีหักคะแนน"],
+    max: MT.length - 1,
+    detail(l) { const [c, r, p] = MT[l]; return "ไพ่ " + (c * r) + " ใบ คู่ที่ไม่ตรงกันเปิดค้าง " + p + " วินาที"; },
+    round(ctx) {
+      const [cols, rows, peek] = MT[ctx.level];
+      const pairs = cols * rows / 2;
+      const deck = shuffle(shuffle(ALL_ITEMS).slice(0, pairs).flatMap((x) => [x, x]));
+      ctx.stage.innerHTML = '<div class="board c' + cols + '" style="--cols:' + cols + '">' +
+        deck.map((c, i) => '<button class="card2 down" data-i="' + i + '" aria-label="ไพ่ใบที่ ' + (i + 1) + '"><span class="emo">' + c[0] + "</span><span>" + c[1] + "</span></button>").join("") + "</div>";
+      ctx.prompt("แตะเปิดทีละ 2 ใบ หาภาพที่เหมือนกัน");
+      const cards = [...ctx.stage.querySelectorAll(".card2")];
+      let first = -1, busy = false, found = 0;
+      cards.forEach((c, i) => c.addEventListener("click", () => {
+        if (busy || !c.classList.contains("down")) return;
+        c.classList.remove("down");
+        if (first < 0) { first = i; return; }
+        const a = cards[first], b = c, same = deck[first] === deck[i];
+        first = -1;
+        if (same) {
+          [a, b].forEach((x) => { x.classList.add("right"); x.disabled = true; x.insertAdjacentHTML("beforeend", '<span class="mark">✓</span>'); });
+          found++;
+          ctx.trial(true, "");
+          if (found === pairs) { ctx.prompt("จับคู่ครบทุกภาพแล้ว"); ctx.end(); }
+          else ctx.prompt("เจอแล้ว " + found + " คู่ จาก " + pairs + " คู่", true);
+        } else {
+          busy = true;
+          [a, b].forEach((x) => { x.classList.add("wrong"); x.insertAdjacentHTML("beforeend", '<span class="mark">✗</span>'); });
+          ctx.trial(false, "ภาพไม่ตรงกัน จำไว้แล้วลองใหม่");
+          later(() => {
+            [a, b].forEach((x) => { x.classList.remove("wrong"); x.classList.add("down"); const m = x.querySelector(".mark"); if (m) m.remove(); });
+            busy = false;
+          }, peek * 1000);
+        }
+      }));
+    }
+  };
+
+  // ---------- game 3: จำลำดับ ----------
+  // [จำนวนปุ่ม, ความยาวลำดับ, วินาทีต่อการกะพริบ]
+  const SQ = [null, [4, 2, 1.0], [4, 3, 1.0], [4, 3, 0.9], [4, 4, 0.9], [5, 4, 0.85], [5, 5, 0.8], [5, 5, 0.75], [6, 6, 0.7], [6, 7, 0.65], [6, 8, 0.6]];
+  const TILES = [
+    { c: "#9E1F14", s: "●" }, { c: "#174E96", s: "▲" }, { c: "#1C5C3B", s: "■" },
+    { c: "#6E3C00", s: "★" }, { c: "#5C2580", s: "♥" }, { c: "#0B5961", s: "◆" }
+  ];
+  const TONES = [392, 440, 523, 587, 659, 784];
+  const seq = {
+    id: "seq", name: "จำลำดับ", icon: ICON.seq, skill: "ฝึกความจำและสมาธิ",
+    howto: ["ปุ่มจะสว่างขึ้นทีละปุ่ม", "จำลำดับที่ปุ่มสว่าง", "เมื่อถึงตาเรา แตะปุ่มตามลำดับเดิม"],
+    max: SQ.length - 1,
+    detail(l) { const [n, len] = SQ[l]; return "ปุ่ม " + n + " ปุ่ม จำลำดับ " + len + " ครั้ง"; },
+    round(ctx) {
+      const [n, len, sec] = SQ[ctx.level];
+      const order = [...Array(len)].map(() => rnd(n));
+      for (let i = 1; i < len; i++) if (order[i] === order[i - 1] && Math.random() < 0.7) order[i] = (order[i] + 1 + rnd(n - 1)) % n;
+      const cols = n === 4 ? 2 : 3;
+      ctx.stage.innerHTML = '<div class="tiles" style="--cols:' + cols + '">' +
+        TILES.slice(0, n).map((t, i) => '<button class="tile" data-i="' + i + '" style="--tc:' + t.c + '" disabled><span class="shp">' + t.s + "</span>ปุ่ม " + (i + 1) + "</button>").join("") + "</div>";
+      ctx.prompt("ดูลำดับให้ดี");
+      const tiles = [...ctx.stage.querySelectorAll(".tile")];
+      const on = sec * 1000 * 0.7;
+      order.forEach((k, i) => {
+        later(() => { tiles[k].classList.add("lit"); note([TONES[k]], 0.1, 0); }, 900 + i * sec * 1000);
+        later(() => tiles[k].classList.remove("lit"), 900 + i * sec * 1000 + on);
+      });
+      later(() => {
+        tiles.forEach((t) => { t.disabled = false; });
+        ctx.prompt("ถึงตาเรา แตะตามลำดับ " + len + " ครั้ง");
+        let idx = 0, over = false;
+        tiles.forEach((t, i) => t.addEventListener("click", () => {
+          if (over) return;
+          if (i === order[idx]) {
+            idx++;
+            t.classList.add("lit"); note([TONES[i]], 0.1, 0);
+            later(() => t.classList.remove("lit"), 350);
+            if (idx === len) {
+              over = true; tiles.forEach((x) => { x.disabled = true; });
+              t.insertAdjacentHTML("beforeend", '<span class="mark">✓</span>');
+              ctx.trial(true, ""); ctx.end();
+            } else ctx.prompt("ถูกแล้ว อีก " + (len - idx) + " ครั้ง", true);
+          } else {
+            over = true; tiles.forEach((x) => { x.disabled = true; });
+            t.classList.add("wrong"); t.insertAdjacentHTML("beforeend", '<span class="mark">✗</span>');
+            ctx.trial(false, "ลำดับที่ถูกคือ ปุ่ม " + order.map((k) => k + 1).join(" → "));
+            ctx.end();
+          }
+        }));
+      }, 900 + len * sec * 1000);
+    }
+  };
+
+  const GAMES = { flash, match, seq };
+  const ORDER = ["flash", "match", "seq"];
+
+  // ---------- adaptive engine ----------
+  // ชุดละ 10 ข้อ: ถูก 9-10 ขึ้น 1 ระดับ / 7-8 คงที่ / 6 หรือน้อยกว่า ลง 1 ระดับ
+  // ผิด 3 ข้อติดกัน ลดระดับทันที (มีผลตั้งแต่ข้อถัดไป) / เริ่มเล่นครั้งใหม่ ต่ำกว่าระดับล่าสุด 1 ระดับ
+  const BLOCK = 10;
+  const savedLevel = (id) => Math.min(GAMES[id].max, Math.max(1, +store.get("lv-" + id, 1) || 1));
+  let S = null;
+
+  function sessionLevel(id) {
+    if (S.levels[id] == null) S.levels[id] = Math.max(1, savedLevel(id) - 1);
+    return S.levels[id];
+  }
+  function setLevel(id, l) { S.levels[id] = Math.min(GAMES[id].max, Math.max(1, l)); store.set("lv-" + id, S.levels[id]); }
+
+  function practiceFor(id) { return store.get("pr-" + id, false) ? [] : [{ game: id, kind: "practice", n: 3, label: "รอบซ้อม" }]; }
+  function dailyPlan() {
+    const supp = new Date().getDate() % 2 ? "match" : "seq";
+    return [].concat(
+      practiceFor("flash"),
+      [{ game: "flash", kind: "warmup", n: 5, label: "อุ่นเครื่อง" }],
+      [1, 2, 3].map((k) => ({ game: "flash", kind: "block", n: BLOCK, label: "ชุดที่ " + k + " จาก 3" })),
+      practiceFor(supp),
+      [{ game: supp, kind: "block", n: BLOCK, label: "เกมเสริม" }]
+    );
+  }
+  function singlePlan(id) { return practiceFor(id).concat([{ game: id, kind: "block", n: BLOCK, label: "ชุดละ " + BLOCK + " ข้อ" }]); }
+
+  function startPlan(plan, daily) {
+    clearTimers();
+    S = { plan, daily, idx: 0, levels: {}, log: [] };
+    if (!daily) return beginSegment();
+    const g = GAMES[plan[0].game];
+    app.innerHTML = howtoPanel(g) +
+      '<p class="note">เริ่มด้วย' + plan[0].label + ' ' + plan[0].n + ' ข้อ ไม่จับเวลา ค่อย ๆ ทำได้เลย</p>' +
+      '<div class="btn-row"><button class="btn" id="go">' + ICON.play + 'เริ่มเลย</button><button class="btn secondary" id="back">' + ICON.home + "กลับหน้าแรก</button></div>";
+    app.querySelector("#go").onclick = beginSegment;
+    app.querySelector("#back").onclick = home;
+    wireSpeak(g);
+    window.scrollTo(0, 0);
+  }
+
+  function beginSegment() {
+    const p = S.plan[S.idx], g = GAMES[p.game];
+    const base = sessionLevel(p.game);
+    S.seg = Object.assign({}, p, { trials: 0, correct: 0, wrongRun: 0, eased: false, startLevel: base,
+      fixed: p.kind === "practice" ? 1 : p.kind === "warmup" ? Math.max(1, base - 2) : null });
+    app.innerHTML =
+      '<div class="playbar"><button class="btn secondary" id="quit">' + ICON.home + "หน้าแรก</button>" +
+      '<span class="pb-title">' + g.name + '</span><span class="pb-count" id="count"></span></div>' +
+      (p.kind === "block" ? "" : '<span class="tag">' + (p.kind === "practice" ? "รอบซ้อม ยังไม่นับคะแนน" : "อุ่นเครื่อง ยังไม่นับคะแนน") + "</span>") +
+      '<div class="dots" id="dots">' + "<span></span>".repeat(p.n) + "</div>" +
+      '<div class="fb" id="fb" role="status" aria-live="polite"></div>' +
+      '<div class="stage"><p class="prompt" id="pr"></p><div id="stage" style="display:contents"></div></div>';
+    app.querySelector("#quit").onclick = home;
+    window.scrollTo(0, 0);
+    nextRound();
+  }
+
+  function paintProgress() {
+    const s = S.seg;
+    app.querySelector("#count").textContent = s.label + " · ข้อ " + Math.min(s.trials + 1, s.n) + "/" + s.n;
+    [...app.querySelectorAll("#dots span")].forEach((d, i) => { d.className = i < s.trials ? "done" : i === s.trials ? "now" : ""; });
+  }
+
+  function nextRound() {
+    const s = S.seg;
+    const fb = app.querySelector("#fb"); fb.className = "fb"; fb.innerHTML = "";
+    paintProgress();
+    const level = s.fixed != null ? s.fixed : S.levels[s.game];
+    const ctx = {
+      level,
+      stage: app.querySelector("#stage"),
+      prompt(text, quiet) { app.querySelector("#pr").textContent = text; if (!quiet) speak(text); },
+      trial,
+      end() { later(() => (s.trials >= s.n ? endSegment() : nextRound()), s.lastOk ? 1500 : 2800); }
+    };
+    GAMES[s.game].round(ctx);
+  }
+
+  function trial(ok, msg) {
+    const s = S.seg;
+    s.trials++; s.lastOk = ok;
+    let eased = false;
+    if (ok) { s.correct++; s.wrongRun = 0; chime(); }
+    else {
+      s.wrongRun++;
+      if (s.kind === "block" && s.wrongRun >= 3) {
+        const before = S.levels[s.game];
+        setLevel(s.game, before - 1);
+        eased = S.levels[s.game] < before; s.eased = s.eased || eased; s.wrongRun = 0;
+      }
+    }
+    const fb = app.querySelector("#fb");
+    fb.className = "fb show " + (ok ? "good" : "bad");
+    const sub = [msg, eased ? "ข้อต่อไปจะง่ายลงนิดหนึ่ง" : ""].filter(Boolean).join(" · ");
+    fb.innerHTML = '<span class="fb-ico" aria-hidden="true">' + (ok ? "✓" : "✗") + "</span><span>" +
+      (ok ? pick(["ถูกต้อง เก่งมาก", "ถูกต้อง", "เยี่ยมเลย"]) : "ยังไม่ถูก ไม่เป็นไรนะ") +
+      (sub ? '<span class="fb-sub">' + sub + "</span>" : "") + "</span>";
+    if (!ok && msg) speak(msg);
+    paintProgress();
+    app.querySelector("#count").textContent = s.label + " · ข้อ " + Math.min(s.trials, s.n) + "/" + s.n;
+  }
+
+  function endSegment() {
+    clearTimers();
+    const s = S.seg, g = GAMES[s.game];
+    let change = 0;
+    if (s.kind === "block") {
+      const rate = s.correct / s.trials;
+      const before = S.levels[s.game];
+      if (rate >= 0.9) setLevel(s.game, before + 1);
+      else if (rate < 0.7 && !s.eased) setLevel(s.game, before - 1);
+      else setLevel(s.game, before);
+      change = S.levels[s.game] - s.startLevel;
+    }
+    if (s.kind === "practice") store.set("pr-" + s.game, true);
+    S.log.push({ name: g.name, label: s.label, kind: s.kind, correct: s.correct, trials: s.trials, level: S.levels[s.game], change });
+    S.idx++;
+    if (S.idx >= S.plan.length) return summary();
+    rest(S.log[S.log.length - 1], S.plan[S.idx]);
+  }
+
+  function changeText(c) { return c > 0 ? "ยากขึ้น " + c + " ระดับ" : c < 0 ? "ง่ายลง " + (-c) + " ระดับ" : "ระดับเท่าเดิม"; }
+
+  function rest(done, next) {
+    const ng = GAMES[next.game];
+    const head = done.kind === "practice" ? "ซ้อมเสร็จแล้ว" : done.kind === "warmup" ? "อุ่นเครื่องเสร็จแล้ว" : done.label + " เสร็จแล้ว";
+    app.innerHTML =
+      '<div class="panel"><h2>' + head + "</h2>" +
+      "<p>ตอบถูก <b>" + done.correct + " จาก " + done.trials + "</b> ข้อ" + (done.kind === "block" ? " · " + changeText(done.change) : "") + "</p>" +
+      '<p class="note">พักสายตาสักครู่ เมื่อพร้อมแล้วค่อยกดเล่นต่อ</p>' +
+      "<p>ต่อไป: <b>" + ng.name + "</b> " + next.label + "</p>" +
+      '<div class="btn-row"><button class="btn" id="go">' + ICON.next + 'เล่นต่อ</button><button class="btn secondary" id="stop">' + ICON.home + "พอแค่นี้ก่อน</button></div></div>" +
+      (next.game !== S.plan[S.idx - 1].game ? howtoPanel(ng) : "");
+    app.querySelector("#go").onclick = beginSegment;
+    app.querySelector("#stop").onclick = summary;
+    wireSpeak(ng);
+    speak(head + " พักสายตาสักครู่");
+    window.scrollTo(0, 0);
+    app.querySelector("#go").focus();
+  }
+
+  function summary() {
+    clearTimers();
+    const k = todayKey(), plays = store.get("plays", {});
+    if (S && S.log.length) store.set("plays", { [k]: (plays[k] || 0) + 1 });
+    const counted = (S ? S.log : []).filter((x) => x.kind === "block");
+    const c = counted.reduce((a, x) => a + x.correct, 0), t = counted.reduce((a, x) => a + x.trials, 0);
+    app.innerHTML =
+      '<div class="panel"><h2>' + (S && S.daily ? "ฝึกวันนี้เรียบร้อย" : "เล่นจบแล้ว") + " ขอบคุณที่มาฝึกด้วยกัน</h2>" +
+      (t ? '<div class="stats"><div class="stat"><b>' + c + " / " + t + '</b>ข้อที่ตอบถูก</div><div class="stat"><b>' + Math.round((100 * c) / t) + '%</b>อัตราตอบถูก</div></div>' : "") +
+      (S && S.log.length ? '<ul class="log">' + S.log.map((x) => "<li><span>" + x.name + " · " + x.label + "</span><b>ถูก " + x.correct + "/" + x.trials + (x.kind === "block" ? " · ระดับ " + x.level : "") + "</b></li>").join("") + "</ul>" : "") +
+      '<p class="note">เป้าหมายคือตอบถูกราว 7 ถึง 8 ข้อจาก 10 ข้อ เกมจะปรับให้ยากขึ้นหรือง่ายลงเองเพื่อให้พอดีกับเรา ครั้งหน้าจะเริ่มต่ำกว่าระดับล่าสุด 1 ระดับเพื่อให้อุ่นเครื่องได้สบาย ๆ</p>' +
+      '<div class="btn-row"><button class="btn" id="home">' + ICON.home + "กลับหน้าแรก</button></div></div>";
+    app.querySelector("#home").onclick = home;
+    S = null;
+    window.scrollTo(0, 0);
+  }
+
+  function howtoPanel(g) {
+    return '<div class="panel"><div class="intro-head"><span class="card-ico">' + g.icon + '</span><div><h2>' + g.name + '</h2><p class="muted">' + g.skill + "</p></div></div>" +
+      '<h3>วิธีเล่น</h3><ol class="howto">' + g.howto.map((h) => "<li><span>" + h + "</span></li>").join("") + "</ol>" +
+      (canSpeak ? '<button class="btn secondary" id="say">' + ICON.sound + "ฟังวิธีเล่น</button>" : "") + "</div>";
+  }
+  function wireSpeak(g) {
+    const b = app.querySelector("#say");
+    if (b) b.onclick = () => speak("วิธีเล่น " + g.name + " " + g.howto.join(" "), true);
+  }
+
+  // ---------- screens ----------
+  function intro(id) {
+    clearTimers();
+    const g = GAMES[id], l = Math.max(1, savedLevel(id) - 1);
+    app.innerHTML = howtoPanel(g) +
+      '<p class="note">เล่นชุดละ ' + BLOCK + " ข้อ ไม่จับเวลา ครั้งนี้เริ่มที่ระดับ " + l + " จาก " + g.max + " (" + g.detail(l) + ")" +
+      (store.get("pr-" + id, false) ? "" : " ครั้งแรกจะมีรอบซ้อม 3 ข้อก่อน") + "</p>" +
+      '<div class="btn-row"><button class="btn" id="go">' + ICON.play + 'เริ่มเล่น</button><button class="btn secondary" id="back">' + ICON.home + "กลับหน้าแรก</button></div>";
+    app.querySelector("#go").onclick = () => startPlan(singlePlan(id), false);
+    app.querySelector("#back").onclick = home;
+    wireSpeak(g);
+    window.scrollTo(0, 0);
+  }
+
+  function home() {
+    clearTimers(); S = null;
+    const plays = store.get("plays", {})[todayKey()] || 0;
+    const supp = GAMES[new Date().getDate() % 2 ? "match" : "seq"];
+    const toggle = (idOn, idOff, on, wOn, wOff, iOn, iOff) =>
+      '<div class="seg"><button class="btn" id="' + idOn + '" aria-pressed="' + on + '">' + iOn + wOn + '</button><button class="btn" id="' + idOff + '" aria-pressed="' + !on + '">' + iOff + wOff + "</button></div>";
+    app.innerHTML =
+      '<header class="brand"><div class="brand-mark">' + ICON.brain + '</div><div><h1>สมองใส</h1><p class="muted">ฝึกสมองวันละนิด สนุกได้ทุกวัน</p></div></header>' +
+      '<p class="today">' + (plays ? "วันนี้เล่นไปแล้ว " + plays + " รอบ เก่งมาก" : "วันนี้ยังไม่ได้เล่น เริ่มฝึกได้เลย") + "</p>" +
+      '<section class="daily"><h2>ฝึกประจำวัน</h2><p class="muted">ใช้เวลาประมาณ 15 นาที พักได้ระหว่างชุด</p>' +
+        "<ol><li>อุ่นเครื่อง 5 ข้อ</li><li>ตาไวมือไว 3 ชุด</li><li>เกมเสริมวันนี้: " + supp.name + "</li><li>ดูสรุปผล</li></ol>" +
+        '<button class="btn" id="daily">' + ICON.play + "เริ่มฝึกประจำวัน</button></section>" +
+      '<p class="section-label">หรือเลือกเล่นทีละเกม</p>' +
+      '<div class="cards">' + ORDER.map((id) => {
+        const g = GAMES[id];
+        return '<button class="card" data-g="' + id + '"><span class="card-ico">' + g.icon + '</span><span class="card-text"><span class="card-name">' + g.name +
+          '</span><span class="card-skill">' + g.skill + " · ระดับ " + savedLevel(id) + "</span></span></button>";
+      }).join("") + "</div>" +
+      '<section class="settings" aria-label="ตั้งค่า"><h3>ตั้งค่า</h3>' +
+        '<div class="set-row"><span class="set-label">ขนาดตัวอักษร</span>' + toggle("sz1", "sz2", !settings.big, "ใหญ่", "ใหญ่มาก", "", "") + "</div>" +
+        '<div class="set-row"><span class="set-label">เสียงตอบรับ</span>' + toggle("sd1", "sd0", !!settings.sound, "เปิด", "ปิด", ICON.sound, ICON.off) + "</div>" +
+        (canSpeak ? '<div class="set-row"><span class="set-label">อ่านคำแนะนำออกเสียง</span>' + toggle("vc1", "vc0", !!settings.voice, "เปิด", "ปิด", ICON.sound, ICON.off) + "</div>" : "") +
+      "</section>" +
+      '<p class="foot">ต้นแบบสำหรับทดลองเล่น เป็นกิจกรรมฝึกสมองเพื่อความเพลิดเพลิน ไม่ใช่เครื่องมือวินิจฉัยหรือรักษาโรค</p>';
+    app.querySelector("#daily").onclick = () => startPlan(dailyPlan(), true);
+    app.querySelectorAll(".card").forEach((b) => b.addEventListener("click", () => intro(b.dataset.g)));
+    const set = (k, v) => { settings[k] = v; store.set("settings", settings); applySettings(); home(); };
+    app.querySelector("#sz1").onclick = () => set("big", false);
+    app.querySelector("#sz2").onclick = () => set("big", true);
+    app.querySelector("#sd1").onclick = () => { set("sound", true); chime(); };
+    app.querySelector("#sd0").onclick = () => set("sound", false);
+    if (canSpeak) {
+      app.querySelector("#vc1").onclick = () => { set("voice", true); speak("เปิดอ่านคำแนะนำออกเสียงแล้ว"); };
+      app.querySelector("#vc0").onclick = () => set("voice", false);
+    }
+    window.scrollTo(0, 0);
+  }
+
+  home();
+})();
+</script>
+</body>
+</html>
